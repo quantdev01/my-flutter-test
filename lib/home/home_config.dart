@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_flutter_test/core/api/api_endpoints.dart';
+import 'package:my_flutter_test/countries/bloc/action_load.dart';
 import 'package:my_flutter_test/countries/screens/countries_screen.dart';
 import 'package:my_flutter_test/country_details/screens/screens/country_details_screen.dart';
 
@@ -23,23 +26,28 @@ class _HomeConfigState extends State<HomeConfig> {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: items[_selectedIndex],
-      
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (value) {
-          setState(() {
-            _selectedIndex = value;
-          });
-        },
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.black.withValues(alpha: 0.7),
+    return RefreshIndicator(
+      onRefresh: () async {
+        context.read<CountryBloc>().add(LoadCountriesAction(url: Endpoints.allCountriesProd));
+      },
+      child: Scaffold(
+        body: items[_selectedIndex],
         
-        items:[
-        BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home', activeIcon: Icon(Icons.home)),
-         BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'Favorites', activeIcon: Icon(Icons.favorite))
-      ]),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: (value) {
+            setState(() {
+              _selectedIndex = value;
+            });
+          },
+          selectedItemColor: Colors.black,
+          unselectedItemColor: Colors.black.withValues(alpha: 0.7),
+          
+          items:[
+          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home', activeIcon: Icon(Icons.home)),
+           BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'Favorites', activeIcon: Icon(Icons.favorite))
+        ]),
+      ),
     );
   }
 }

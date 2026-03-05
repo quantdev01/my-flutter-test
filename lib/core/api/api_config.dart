@@ -1,7 +1,7 @@
 enum Environment { dev, prod, test }
 
 class ApiConfig {
-  static const Environment currentEnv = Environment.dev;
+  static const Environment currentEnv = Environment.prod;
   String code ;
   ApiConfig(this.code);
   

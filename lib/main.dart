@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_flutter_test/countries/bloc/action_load.dart';
 import 'package:my_flutter_test/home/home_config.dart';
 
 void main() {
@@ -8,16 +10,15 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-       
-        colorScheme: .fromSeed(seedColor: Colors.white),
+      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.white)),
+      home: BlocProvider(
+        create: (_) => CountryBloc(),
+        child: const HomeConfig(),
       ),
-      home: const HomeConfig(),
     );
   }
 }

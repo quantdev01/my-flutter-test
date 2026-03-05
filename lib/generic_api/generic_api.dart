@@ -39,10 +39,12 @@ class GenericApi {
         Uri.parse(url),
         headers: await headers(),
       );
+      log('Data gotten ${response.body.length}');
       if (response.statusCode == 200 || response.statusCode == 201) {
         final decoded = jsonDecode(response.body) as List;
         return decoded.map((e) => fromJson(e)).toList();
       }
+      log('Data gotten ${response.body}');
       log('Error while fetching list of data : error');
       return [];
     } catch (e, stackTrace) {
