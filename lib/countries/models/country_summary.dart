@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:my_flutter_test/countries/models/flags.dart';
 import 'package:my_flutter_test/utils/constants.dart';
 
-
 @immutable
 class CountrySummary {
   final String name;
@@ -11,9 +10,22 @@ class CountrySummary {
 
   final num population;
 
-  const CountrySummary({required this.name, required this.flags, required this.population, required this.cca2,});
+  const CountrySummary({
+    required this.name,
+    required this.flags,
+    required this.population,
+    required this.cca2,
+  });
 
-   CountrySummary.fromJson(Json json) : name = json['name']['common'].toString(), flags = Flags.fromJson(json['flags']), population = json['population'], cca2 = json['cca2'];
+  CountrySummary.fromJson(Json json)
+    : name = (json['name'] != null && json['name']['common'] != null)
+          ? json['name']['common'].toString()
+          : 'Unknown',
+      flags = json['flags'] != null
+          ? Flags.fromJson(json['flags'])
+          : const Flags(png: '', svg: '', alt: ''),
+      population = json['population'] ?? 0,
+      cca2 = json['cca2'] ?? '';
 }
 
 

@@ -6,6 +6,7 @@ import 'package:my_flutter_test/countries/widgets/country_item.dart';
 import 'package:my_flutter_test/theme/app_colors.dart';
 import 'package:my_flutter_test/utils/widgets/custom_app_bar.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:my_flutter_test/country_details/screens/screens/country_details_screen.dart';
 import 'dart:developer' as developer;
 
 class CountriesScreen extends StatefulWidget {
@@ -33,81 +34,107 @@ class _CountriesScreenState extends State<CountriesScreen> {
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 3),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 3),
               decoration: BoxDecoration(
                 color: AppColors.greyLight,
                 borderRadius: BorderRadius.circular(16),
               ),
-
               child: TextField(
-                decoration: InputDecoration(
+                onChanged: (value) {
+                  context.read<CountryBloc>().add(
+                    SearchCountriesAction(query: value),
+                  );
+                },
+                decoration: const InputDecoration(
                   border: InputBorder.none,
                   disabledBorder: InputBorder.none,
-                  hint: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.search_outlined,
-                        color: AppColors.greySearchColor,
-                      ),
-                      SizedBox(width: 10),
-                      Text(
-                        'Search for a country',
-                        style: TextStyle(
-                          color: AppColors.greySearchColor,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-                    ],
+                  hintText: 'Search for a country',
+                  prefixIcon: Icon(
+                    Icons.search_outlined,
+                    color: AppColors.greySearchColor,
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 10),
-
+            const SizedBox(height: 10),
             Expanded(
               child: BlocBuilder<CountryBloc, FetchResult?>(
                 buildWhen: (previousResult, currentResult) =>
                     previousResult != currentResult,
                 builder: (context, fetchResult) {
-                  final countries = fetchResult?.countries;
-                  fetchResult?.log();
-                  if (countries == null) {
+                  if (fetchResult == null || fetchResult.isLoading) {
                     return ListView.builder(
                       itemCount: 10,
+                      padding: EdgeInsets.zero,
                       itemBuilder: (context, index) => Skeletonizer(
                         enabled: true,
-
                         child: Card(
                           child: CountryItem(
                             imageUrl: '',
-                            title: 'title',
-                            population: '',
+                            title: 'Loading Country Name',
+                            population: '00.00 million',
+                            cca2: '',
                           ),
                         ),
                       ),
                     );
                   }
-                  return fetchResult!.countries.isEmpty
-                      ? Center(
-                          child: TextButton(
-                            onPressed: () {},
-                            child: Text('Retry'),
+
+                  if (fetchResult.error != null) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Error: ${fetchResult.error}'),
+                          TextButton(
+                            onPressed: () {
+                              context.read<CountryBloc>().add(
+                                LoadCountriesAction(
+                                  url: Endpoints.allCountriesProd,
+                                  isRefresh: true,
+                                ),
+                              );
+                            },
+                            child: const Text('Retry'),
                           ),
-                        )
-                      : ListView.builder(
-                          itemCount: countries.length,
-                          itemBuilder: (context, index) {
-                            final country = countries[index];
-                            return CountryItem(
-                              imageUrl: country.flags.png,
-                              title: country.name.length > 20
-                                  ? '${country.name.substring(0, 20)}...'
-                                  : country.name,
-                              population: country.population.toMillion(),
-                            );
-                          },
-                        );
+                        ],
+                      ),
+                    );
+                  }
+
+                  final countries = fetchResult.countries;
+                  if (countries == null || countries.isEmpty) {
+                    return const Center(child: Text('No countries found.'));
+                  }
+
+                  return ListView.builder(
+                    itemCount: countries.length,
+                    itemBuilder: (context, index) {
+                      final country = countries[index];
+                      return GestureDetector(
+                        onTap: () {
+                          context.read<CountryBloc>().add(
+                            LoadCountryDetailsAction(code: country.cca2),
+                          );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const CountryDetailsScreen(),
+                            ),
+                          );
+                        },
+                        child: CountryItem(
+                          imageUrl: country.flags.png,
+                          title: country.name.length > 20
+                              ? '${country.name.substring(0, 20)}...'
+                              : country.name,
+                          population: country.population.toMillion(),
+                          cca2: country.cca2,
+                        ),
+                      );
+                    },
+                  );
                 },
               ),
             ),

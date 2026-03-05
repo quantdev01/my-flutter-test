@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:developer';
 
@@ -23,9 +22,7 @@ class GenericApi {
       log('Response status: ${response.statusCode}');
       return fromJson(jsonDecode(response.body));
     } catch (e, stackTrace) {
-      log(
-        'Error while fetching data : error [$e], stacktrace [$stackTrace]',
-      );
+      log('Error while fetching data : error [$e], stacktrace [$stackTrace]');
       return fromJson({});
     }
   }
@@ -41,18 +38,22 @@ class GenericApi {
       );
       log('Data gotten ${response.body.length}');
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final decoded = jsonDecode(response.body) as List;
-        return decoded.map((e) => fromJson(e)).toList();
+        final decoded = jsonDecode(response.body);
+        if (decoded is List) {
+          return decoded.map((e) => fromJson(e)).toList();
+        } else if (decoded is Map<String, dynamic>) {
+          // Some endpoints might return a single object instead of a list
+          return [fromJson(decoded)];
+        }
       }
       log('Data gotten ${response.body}');
       log('Error while fetching list of data : error');
       return [];
     } catch (e, stackTrace) {
-     log(
+      log(
         'Error while fetching list of data : error [$e], stacktrace [$stackTrace]',
       );
       return [];
     }
   }
-
 }
