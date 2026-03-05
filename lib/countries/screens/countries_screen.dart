@@ -64,7 +64,10 @@ class _CountriesScreenState extends State<CountriesScreen> {
                 buildWhen: (previousResult, currentResult) =>
                     previousResult != currentResult,
                 builder: (context, fetchResult) {
-                  if (fetchResult == null || fetchResult.isLoading) {
+                  if (fetchResult == null ||
+                      (fetchResult.isLoading &&
+                          (fetchResult.countries == null ||
+                              fetchResult.countries!.isEmpty))) {
                     return ListView.builder(
                       itemCount: 10,
                       padding: EdgeInsets.zero,
