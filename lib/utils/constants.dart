@@ -15,3 +15,6 @@ EdgeInsets kPadding = EdgeInsets.symmetric(horizontal: 20);
 void goTo(Widget screen, BuildContext context){
   Navigator.push(context, MaterialPageRoute( builder: (context) => screen));
 }
+
+// My Json
+typedef Json = Map<String, dynamic>;

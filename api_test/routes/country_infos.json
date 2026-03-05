@@ -1,0 +1,15 @@
+{
+    "name": {
+            "common": "DRC CONGO"
+        },
+     "flags": {
+            "png": "http://127.0.0.1:5500/api_test/images/drc.png",
+            "svg": ""
+        },
+    "population":433334,
+    "capital":["capital one", "capital two", "capital three"],
+    "region":"yet state",
+    "subregion":"Mapasa region",
+    "area":455544,
+    "timezones":["UTC +2", "UTC +50"]
+}
