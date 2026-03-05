@@ -46,15 +46,18 @@ class _CountryItemState extends State<CountryItem> {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
-          SizedBox(
-            height: kMediaSize(context).height * 0.07,
-            width: kMediaSize(context).width * 0.25,
-            child: widget.imageUrl.isNotEmpty
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(widget.imageUrl, fit: BoxFit.cover),
-                  )
-                : const Text('Image not found'),
+          Hero(
+            tag: 'flag-${widget.cca2}',
+            child: SizedBox(
+              height: kMediaSize(context).height * 0.07,
+              width: kMediaSize(context).width * 0.25,
+              child: widget.imageUrl.isNotEmpty
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(widget.imageUrl, fit: BoxFit.cover),
+                    )
+                  : const Text('Image not found'),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(

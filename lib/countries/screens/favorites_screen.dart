@@ -72,7 +72,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         child: CountryItem(
                           imageUrl: country.flags.png,
                           title: country.name,
-                          population: country.population.toMillion(),
+                          population: country.population.formatPopulation(),
                           cca2: country.cca2,
                         ),
                       );

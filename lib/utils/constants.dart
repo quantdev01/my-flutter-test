@@ -19,10 +19,14 @@ void goTo(Widget screen, BuildContext context) {
 // My Json
 typedef Json = Map<String, dynamic>;
 
-extension NumFormatting on num {
-  String toMillion() {
+extension PopulationFormatter on num {
+  String formatPopulation() {
     if (this >= 1000000) {
-      return '${(this / 1000000).toStringAsFixed(2)} million';
+      final millionValue = this / 1000000;
+      return '${millionValue.toStringAsFixed(1)}M';
+    } else if (this >= 1000) {
+      final thousandValue = this / 1000;
+      return '${thousandValue.toStringAsFixed(1)}K';
     } else {
       return toString();
     }
